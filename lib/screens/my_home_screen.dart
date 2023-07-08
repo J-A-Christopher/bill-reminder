@@ -7,19 +7,27 @@ class MyHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.grey,
-        title: const Row(
-          children: [
-            Icon(Icons.attach_money),
-            Text('BillBuddy'),
-          ],
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.grey,
+          title: const Row(
+            children: [
+              Icon(Icons.attach_money),
+              Text('BillBuddy'),
+            ],
+          ),
         ),
-      ),
-      body: const Column(
-        children: [HomeWidget()],
-      ),
-    );
+        body: ListView(
+          children: const [HomeWidget()],
+        )
+        // const SingleChildScrollView(
+        //   child: SizedBox(
+        //     height: 1000,
+        //     child: Column(
+        //       children: [HomeWidget()],
+        //     ),
+        //   ),
+        // ),
+        );
   }
 }
