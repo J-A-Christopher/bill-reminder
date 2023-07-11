@@ -51,7 +51,7 @@ class _AddBillState extends State<AddBill> {
 
   @override
   Widget build(BuildContext context) {
-    var billData = Provider.of<BillProvider>(context, listen: false).bills;
+    final billData = Provider.of<BillProvider>(context).bills;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -96,7 +96,7 @@ class _AddBillState extends State<AddBill> {
                                       id: null,
                                       billName: value!,
                                       billAmount: _edittedBill.billAmount,
-                                      createdAt: _edittedBill.createdAt,
+                                      createdAt: DateTime.now(),
                                       description: _edittedBill.description,
                                       dueDate: _edittedBill.dueDate,
                                       billTitle: _edittedBill.billTitle);
@@ -121,7 +121,7 @@ class _AddBillState extends State<AddBill> {
                                       id: null,
                                       billName: _edittedBill.billName,
                                       billAmount: double.parse(value!),
-                                      createdAt: _edittedBill.createdAt,
+                                      createdAt: DateTime.now(),
                                       description: _edittedBill.description,
                                       dueDate: _edittedBill.dueDate,
                                       billTitle: _edittedBill.billTitle);
@@ -179,7 +179,7 @@ class _AddBillState extends State<AddBill> {
                                       id: null,
                                       billName: _edittedBill.billName,
                                       billAmount: _edittedBill.billAmount,
-                                      createdAt: _edittedBill.createdAt,
+                                      createdAt: DateTime.now(),
                                       description: value!,
                                       dueDate: _edittedBill.dueDate,
                                       billTitle: _edittedBill.billTitle);

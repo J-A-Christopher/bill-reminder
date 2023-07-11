@@ -3,16 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../Data/models/bill_model.dart';
 
 class BillProvider extends ChangeNotifier {
-  final List<BillModel> _bills = [
-    // BillModel(
-    //     id: DateTime.now().toString(),
-    //     billName: 'Smokie',
-    //     billAmount: 50,
-    //     createdAt: DateTime.now(),
-    //     description: 'Nice',
-    //     dueDate: DateTime.now(),
-    //     billTitle: 'l,')
-  ];
+  final List<BillModel> _bills = [];
 
   List<BillModel> get bills {
     return [..._bills];
