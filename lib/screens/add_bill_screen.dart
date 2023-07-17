@@ -16,27 +16,25 @@ class _AddBillState extends State<AddBill> {
   @override
   void initState() {
     super.initState();
+
     context.read<BillProvider>().fetchAndSetBills();
   }
 
   final _formKey = GlobalKey<FormState>();
-  var _isLoading = false;
+
   var _edittedBill = BillModel(
       id: null,
       billName: '',
       createdAt: DateTime.now(),
       description: '',
       dueDate: null,
-      billTitle: '',
       billAmount: 0);
   var dateController = TextEditingController();
   DateTime? date;
 
   Future<void> _submitForm() async {
     _formKey.currentState!.save();
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() {});
     try {
       await Provider.of<BillProvider>(context, listen: false)
           .addBill(_edittedBill);
@@ -59,9 +57,7 @@ class _AddBillState extends State<AddBill> {
           });
     } finally {
       dateController.text = '';
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() {});
       Navigator.of(context).pop();
     }
   }
@@ -127,13 +123,13 @@ class _AddBillState extends State<AddBill> {
                               TextFormField(
                                 onSaved: (value) {
                                   _edittedBill = BillModel(
-                                      id: null,
-                                      billName: value!,
-                                      billAmount: _edittedBill.billAmount,
-                                      createdAt: DateTime.now(),
-                                      description: _edittedBill.description,
-                                      dueDate: _edittedBill.dueDate,
-                                      billTitle: _edittedBill.billTitle);
+                                    id: null,
+                                    billName: value!,
+                                    billAmount: _edittedBill.billAmount,
+                                    createdAt: DateTime.now(),
+                                    description: _edittedBill.description,
+                                    dueDate: _edittedBill.dueDate,
+                                  );
                                 },
                                 decoration: const InputDecoration(
                                     filled: true,
@@ -152,13 +148,13 @@ class _AddBillState extends State<AddBill> {
                               TextFormField(
                                 onSaved: (value) {
                                   _edittedBill = BillModel(
-                                      id: null,
-                                      billName: _edittedBill.billName,
-                                      billAmount: double.parse(value!),
-                                      createdAt: DateTime.now(),
-                                      description: _edittedBill.description,
-                                      dueDate: _edittedBill.dueDate,
-                                      billTitle: _edittedBill.billTitle);
+                                    id: null,
+                                    billName: _edittedBill.billName,
+                                    billAmount: double.parse(value!),
+                                    createdAt: DateTime.now(),
+                                    description: _edittedBill.description,
+                                    dueDate: _edittedBill.dueDate,
+                                  );
                                 },
                                 decoration: const InputDecoration(
                                     filled: true,
@@ -184,13 +180,13 @@ class _AddBillState extends State<AddBill> {
                                       DateTime.parse(dateController.text);
 
                                   _edittedBill = BillModel(
-                                      id: null,
-                                      billName: _edittedBill.billName,
-                                      billAmount: _edittedBill.billAmount,
-                                      createdAt: null,
-                                      description: '',
-                                      dueDate: now,
-                                      billTitle: '');
+                                    id: null,
+                                    billName: _edittedBill.billName,
+                                    billAmount: _edittedBill.billAmount,
+                                    createdAt: null,
+                                    description: '',
+                                    dueDate: now,
+                                  );
                                 },
                                 decoration: const InputDecoration(
                                     icon: Icon(Icons.calendar_today),
@@ -210,13 +206,13 @@ class _AddBillState extends State<AddBill> {
                               TextFormField(
                                 onSaved: (value) {
                                   _edittedBill = BillModel(
-                                      id: null,
-                                      billName: _edittedBill.billName,
-                                      billAmount: _edittedBill.billAmount,
-                                      createdAt: DateTime.now(),
-                                      description: value!,
-                                      dueDate: _edittedBill.dueDate,
-                                      billTitle: _edittedBill.billTitle);
+                                    id: null,
+                                    billName: _edittedBill.billName,
+                                    billAmount: _edittedBill.billAmount,
+                                    createdAt: DateTime.now(),
+                                    description: value!,
+                                    dueDate: _edittedBill.dueDate,
+                                  );
                                 },
                                 maxLines: 4,
                                 decoration: const InputDecoration(

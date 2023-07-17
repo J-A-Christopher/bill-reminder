@@ -6,7 +6,7 @@ import '../Data/models/bill_model.dart';
 import 'package:http/http.dart' as http;
 
 class BillProvider extends ChangeNotifier {
-  final List<BillModel> _bills = [];
+  List<BillModel> _bills = [];
 
   List<BillModel> get bills {
     return [..._bills];
@@ -31,9 +31,9 @@ class BillProvider extends ChangeNotifier {
           createdAt: bill.createdAt,
           description: bill.description,
           dueDate: bill.dueDate,
-          billTitle: bill.billTitle,
           id: json.decode(response.body)['name']);
       _bills.add(newBill);
+
       notifyListeners();
     } catch (error) {
       print(error);
@@ -48,7 +48,20 @@ class BillProvider extends ChangeNotifier {
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      // extractedData.forEach((billId, billData) { })
+      final List<BillModel> loadedBills = [];
+      extractedData.forEach((billId, billData) {
+        loadedBills.add(BillModel(
+          id: billId,
+          billName: billData['title'],
+          billAmount: billData['amount'],
+          createdAt: DateTime.parse(billData['createdAt']),
+          description: billData['description'],
+          dueDate: DateTime.parse(billData['duDate']),
+        ));
+      });
+      _bills = loadedBills;
+
+      notifyListeners();
     } catch (error) {
       rethrow;
     }
