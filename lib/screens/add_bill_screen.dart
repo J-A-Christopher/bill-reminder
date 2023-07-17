@@ -13,7 +13,14 @@ class AddBill extends StatefulWidget {
 }
 
 class _AddBillState extends State<AddBill> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<BillProvider>().fetchAndSetBills();
+  }
+
   final _formKey = GlobalKey<FormState>();
+  var _isLoading = false;
   var _edittedBill = BillModel(
       id: null,
       billName: '',
@@ -25,11 +32,38 @@ class _AddBillState extends State<AddBill> {
   var dateController = TextEditingController();
   DateTime? date;
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     _formKey.currentState!.save();
-    Provider.of<BillProvider>(context, listen: false).addBill(_edittedBill);
-    dateController.text = '';
-    Navigator.of(context).pop();
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await Provider.of<BillProvider>(context, listen: false)
+          .addBill(_edittedBill);
+    } catch (error) {
+      await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('An Error Occured'),
+              content: const Text('Something went wrong.. Are you online?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'))
+              ],
+            );
+          });
+    } finally {
+      dateController.text = '';
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
+    }
   }
 
   void _selectedDate() async {
@@ -218,12 +252,6 @@ class _AddBillState extends State<AddBill> {
                                     height: 50,
                                     child: ElevatedButton(
                                       onPressed: _submitForm,
-
-                                      // () {
-
-                                      //Navigator.of(context).pop();
-                                      //   dateController.text = '';
-                                      // },
                                       style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
