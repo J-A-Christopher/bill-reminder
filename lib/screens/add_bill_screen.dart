@@ -26,6 +26,21 @@ class _AddBillState extends State<AddBill> {
     try {
       await context.read<BillProvider>().fetchAndSetBills();
     } catch (error) {
+      await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('An Error Occured'),
+              content: const Text('Are you online?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Ok'))
+              ],
+            );
+          });
       print("Error fetching and setting bills: $error");
     }
   }
@@ -41,13 +56,20 @@ class _AddBillState extends State<AddBill> {
       billAmount: 0);
   var dateController = TextEditingController();
   DateTime? date;
+  bool _isLoading = false;
 
   Future<void> _submitForm() async {
+    setState(() {
+      _isLoading = true;
+    });
     _formKey.currentState!.save();
-    setState(() {});
+
     try {
       await Provider.of<BillProvider>(context, listen: false)
           .addBill(_edittedBill);
+      setState(() {
+        _isLoading = false;
+      });
     } catch (error) {
       await showDialog(
           context: context,
@@ -89,7 +111,6 @@ class _AddBillState extends State<AddBill> {
 
   @override
   Widget build(BuildContext context) {
-    final billData = Provider.of<BillProvider>(context).bills;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -278,15 +299,11 @@ class _AddBillState extends State<AddBill> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text('Hey Jesse'),
       ),
-      body:
-          // billData.isEmpty
-          //     ? const Center(
-          //         child: Text(
-          //             'Nothing to display. Press the plus button to create a bill'),
-          //       )
-          //     :
-
-          const BillCreation(),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : const BillCreation(),
     );
   }
 }

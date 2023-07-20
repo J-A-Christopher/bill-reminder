@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => BillProvider(),
       child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           theme: ThemeData().copyWith(
               colorScheme: ThemeData().colorScheme.copyWith(
                   secondary: const Color(0xff8e9394), primary: Colors.grey)),

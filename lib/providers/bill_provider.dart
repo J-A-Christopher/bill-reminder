@@ -14,20 +14,24 @@ class BillProvider extends ChangeNotifier {
 
   Future<void> updateProduct(String id, BillModel billModel) async {
     final billIndex = _bills.indexWhere((bill) => bill.id == id);
+    try {
+      if (billIndex >= 0) {
+        var url = Uri.parse(
+            'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
+        await http.patch(url,
+            body: json.encode({
+              'title': billModel.billName,
+              'description': billModel.description,
+              'amount': billModel.billAmount,
+              'dueDate': billModel.dueDate?.toIso8601String(),
+              'createdAt': billModel.createdAt?.toIso8601String()
+            }));
+        _bills[billIndex] = billModel;
 
-    if (billIndex >= 0) {
-      var url = Uri.parse(
-          'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
-      await http.patch(url,
-          body: json.encode({
-            'title': billModel.billName,
-            'description': billModel.description,
-            'amount': billModel.billAmount,
-            'dueDate': billModel.dueDate?.toIso8601String(),
-            'createdAt': billModel.createdAt?.toIso8601String()
-          }));
-      _bills[billIndex] = billModel;
-      notifyListeners();
+        notifyListeners();
+      }
+    } catch (error) {
+      rethrow;
     }
   }
 
@@ -60,6 +64,78 @@ class BillProvider extends ChangeNotifier {
     }
   }
 
+  // Future<void> fetchAndSetBills() async {
+  //   try {
+  //     // Check if the data is cached in shared preferences
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final cachedData = prefs.getString('cached_bills_data');
+
+  //     if (cachedData != null) {
+  //       final extractedData = json.decode(cachedData) as Map<String, dynamic>;
+  //       final List<BillModel> loadedBills = [];
+  //       extractedData.forEach((billId, billData) {
+  //         final createdAtString = billData['createdAt'] as String?;
+  //         final duDateString = billData['duDate'] as String?;
+
+  //         loadedBills.add(BillModel(
+  //           id: billId,
+  //           billName: billData['title'] ?? '',
+  //           billAmount: billData['amount'] ?? 0,
+  //           createdAt: createdAtString != null
+  //               ? DateTime.parse(createdAtString)
+  //               : DateTime.now(),
+  //           description: billData['description'] ?? '',
+  //           dueDate: duDateString != null
+  //               ? DateTime.parse(duDateString)
+  //               : DateTime.now(),
+  //         ));
+  //       });
+  //       _bills = loadedBills;
+  //       notifyListeners();
+  //     } else {
+  //       // If data is not cached, make a network request and cache the response
+  //       var url = Uri.parse(
+  //           'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
+  //       final response = await http.get(url);
+
+  //       if (response.statusCode != 200) {
+  //         return;
+  //       }
+
+  //       final extractedData =
+  //           json.decode(response.body) as Map<String, dynamic>;
+  //       final List<BillModel> loadedBills = [];
+  //       extractedData.forEach((billId, billData) {
+  //         final createdAtString = billData['createdAt'] as String?;
+  //         final duDateString = billData['duDate'] as String?;
+
+  //         loadedBills.add(BillModel(
+  //           id: billId,
+  //           billName: billData['title'] ?? '',
+  //           billAmount: billData['amount'] ?? 0,
+  //           createdAt: createdAtString != null
+  //               ? DateTime.parse(createdAtString)
+  //               : DateTime.now(),
+  //           description: billData['description'] ?? '',
+  //           dueDate: duDateString != null
+  //               ? DateTime.parse(duDateString)
+  //               : DateTime.now(),
+  //         ));
+  //       });
+  //       _bills = loadedBills;
+  //       notifyListeners();
+
+  //       // Cache the response data
+  //       prefs.setString('cached_bills_data', response.body);
+  //     }
+  //   } catch (error) {
+  //     print("Error fetching and setting bills: $error");
+  //     rethrow;
+  //   }
+  // }
+
+  ///hapa
+
   Future<void> fetchAndSetBills() async {
     var url = Uri.parse(
         'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
@@ -68,7 +144,6 @@ class BillProvider extends ChangeNotifier {
       final response = await http.get(url);
 
       if (response.statusCode != 200) {
-        // Handle the case where the response body is null (no data returned).
         return;
       }
 
@@ -94,7 +169,6 @@ class BillProvider extends ChangeNotifier {
       _bills = loadedBills;
       notifyListeners();
     } catch (error) {
-      // Handle errors appropriately
       print("Error fetching and setting bills: $error");
       rethrow;
     }
