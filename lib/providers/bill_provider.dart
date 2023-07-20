@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 
@@ -64,77 +65,26 @@ class BillProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> fetchAndSetBills() async {
-  //   try {
-  //     // Check if the data is cached in shared preferences
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final cachedData = prefs.getString('cached_bills_data');
+  Future<void> deleteBill(String id) async {
+    var url = Uri.parse(
+        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
+    final existingBillIndex = _bills.indexWhere((bill) => bill.id == id);
+    BillModel? existingBill = _bills[existingBillIndex];
+    _bills.removeAt(existingBillIndex);
+    notifyListeners();
 
-  //     if (cachedData != null) {
-  //       final extractedData = json.decode(cachedData) as Map<String, dynamic>;
-  //       final List<BillModel> loadedBills = [];
-  //       extractedData.forEach((billId, billData) {
-  //         final createdAtString = billData['createdAt'] as String?;
-  //         final duDateString = billData['duDate'] as String?;
+    _bills.removeWhere((bill) => bill.id == id);
+    final response = await http.delete(url);
 
-  //         loadedBills.add(BillModel(
-  //           id: billId,
-  //           billName: billData['title'] ?? '',
-  //           billAmount: billData['amount'] ?? 0,
-  //           createdAt: createdAtString != null
-  //               ? DateTime.parse(createdAtString)
-  //               : DateTime.now(),
-  //           description: billData['description'] ?? '',
-  //           dueDate: duDateString != null
-  //               ? DateTime.parse(duDateString)
-  //               : DateTime.now(),
-  //         ));
-  //       });
-  //       _bills = loadedBills;
-  //       notifyListeners();
-  //     } else {
-  //       // If data is not cached, make a network request and cache the response
-  //       var url = Uri.parse(
-  //           'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
-  //       final response = await http.get(url);
+    if (response.statusCode >= 400) {
+      _bills.insert(existingBillIndex, existingBill);
+      notifyListeners();
+      throw const HttpException('Could not delete Bill');
+    }
+    existingBill = null;
 
-  //       if (response.statusCode != 200) {
-  //         return;
-  //       }
-
-  //       final extractedData =
-  //           json.decode(response.body) as Map<String, dynamic>;
-  //       final List<BillModel> loadedBills = [];
-  //       extractedData.forEach((billId, billData) {
-  //         final createdAtString = billData['createdAt'] as String?;
-  //         final duDateString = billData['duDate'] as String?;
-
-  //         loadedBills.add(BillModel(
-  //           id: billId,
-  //           billName: billData['title'] ?? '',
-  //           billAmount: billData['amount'] ?? 0,
-  //           createdAt: createdAtString != null
-  //               ? DateTime.parse(createdAtString)
-  //               : DateTime.now(),
-  //           description: billData['description'] ?? '',
-  //           dueDate: duDateString != null
-  //               ? DateTime.parse(duDateString)
-  //               : DateTime.now(),
-  //         ));
-  //       });
-  //       _bills = loadedBills;
-  //       notifyListeners();
-
-  //       // Cache the response data
-  //       prefs.setString('cached_bills_data', response.body);
-  //     }
-  //   } catch (error) {
-  //     print("Error fetching and setting bills: $error");
-  //     rethrow;
-  //   }
-  // }
-
-  ///hapa
+    notifyListeners();
+  }
 
   Future<void> fetchAndSetBills() async {
     var url = Uri.parse(
@@ -173,68 +123,4 @@ class BillProvider extends ChangeNotifier {
       rethrow;
     }
   }
-
-  // Future<void> fetchAndSetBills() async {
-  //   var url = Uri.parse(
-  //       'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
-
-  //   try {
-  //     final response = await http.get(url);
-
-  //     if (response.body == null) {
-  //       return;
-  //     }
-  //     final extractedData = json.decode(response.body) as Map<String, dynamic>;
-  //     final List<BillModel> loadedBills = [];
-  //     extractedData.forEach((billId, billData) {
-  //       final createdAtString = billData['createdAt'] as String?;
-  //       final duDateString = billData['duDate'] as String?;
-
-  //       loadedBills.add(BillModel(
-  //         id: billId,
-  //         billName: billData['title'] ?? '',
-  //         billAmount: billData['amount'] ?? 0,
-  //         createdAt: createdAtString != null
-  //             ? DateTime.parse(createdAtString)
-  //             : DateTime.now(),
-  //         description: billData['description'] ?? '',
-  //         dueDate: duDateString != null
-  //             ? DateTime.parse(duDateString)
-  //             : DateTime.now(),
-  //       ));
-  //     });
-  //     _bills = loadedBills;
-  //     notifyListeners();
-  //   } catch (error) {
-  //     // Handle errors appropriately
-  //     print("Error fetching and setting bills: $error");
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<void> fetchAndSetBills() async {
-  //   var url = Uri.parse(
-  //       'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
-
-  //   try {
-  //     final response = await http.get(url);
-  //     final extractedData = json.decode(response.body) as Map<String, dynamic>;
-  //     final List<BillModel> loadedBills = [];
-  //     extractedData.forEach((billId, billData) {
-  //       loadedBills.add(BillModel(
-  //         id: billId,
-  //         billName: billData['title'],
-  //         billAmount: billData['amount'],
-  //         createdAt: DateTime.parse(billData['createdAt']),
-  //         description: billData['description'],
-  //         dueDate: DateTime.parse(billData['duDate']),
-  //       ));
-  //     });
-  //     _bills = loadedBills;
-
-  //     notifyListeners();
-  //   } catch (error) {
-  //     rethrow;
-  //   }
-  // }
 }

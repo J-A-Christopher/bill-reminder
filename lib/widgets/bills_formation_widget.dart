@@ -18,6 +18,7 @@ class _BillCreationState extends State<BillCreation> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     return RefreshIndicator(
       onRefresh: _refreshBills,
       child: FutureBuilder(
@@ -89,6 +90,31 @@ class _BillCreationState extends State<BillCreation> {
                                                       fontSize: 20),
                                                 ),
                                               ),
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await Provider.of<
+                                                                  BillProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteBill(value
+                                                                  .bills[index]
+                                                                  .id ??
+                                                              '');
+                                                    } catch (error) {
+                                                      scaffold.showSnackBar(
+                                                          const SnackBar(
+                                                              content: Text(
+                                                        'Deleting Failed..Try Again Later..',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      )));
+                                                    }
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ))
                                             ],
                                           ),
                                           Column(
