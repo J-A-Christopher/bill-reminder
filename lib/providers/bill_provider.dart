@@ -12,6 +12,25 @@ class BillProvider extends ChangeNotifier {
     return [..._bills];
   }
 
+  Future<void> updateProduct(String id, BillModel billModel) async {
+    final billIndex = _bills.indexWhere((bill) => bill.id == id);
+
+    if (billIndex >= 0) {
+      var url = Uri.parse(
+          'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
+      await http.patch(url,
+          body: json.encode({
+            'title': billModel.billName,
+            'description': billModel.description,
+            'amount': billModel.billAmount,
+            'dueDate': billModel.dueDate?.toIso8601String(),
+            'createdAt': billModel.createdAt?.toIso8601String()
+          }));
+      _bills[billIndex] = billModel;
+      notifyListeners();
+    }
+  }
+
   Future<void> addBill(BillModel bill) async {
     var url = Uri.parse(
         'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
@@ -47,23 +66,101 @@ class BillProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        // Handle the case where the response body is null (no data returned).
+        return;
+      }
+
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<BillModel> loadedBills = [];
       extractedData.forEach((billId, billData) {
+        final createdAtString = billData['createdAt'] as String?;
+        final duDateString = billData['duDate'] as String?;
+
         loadedBills.add(BillModel(
           id: billId,
-          billName: billData['title'],
-          billAmount: billData['amount'],
-          createdAt: DateTime.parse(billData['createdAt']),
-          description: billData['description'],
-          dueDate: DateTime.parse(billData['duDate']),
+          billName: billData['title'] ?? '',
+          billAmount: billData['amount'] ?? 0,
+          createdAt: createdAtString != null
+              ? DateTime.parse(createdAtString)
+              : DateTime.now(),
+          description: billData['description'] ?? '',
+          dueDate: duDateString != null
+              ? DateTime.parse(duDateString)
+              : DateTime.now(),
         ));
       });
       _bills = loadedBills;
-
       notifyListeners();
     } catch (error) {
+      // Handle errors appropriately
+      print("Error fetching and setting bills: $error");
       rethrow;
     }
   }
+
+  // Future<void> fetchAndSetBills() async {
+  //   var url = Uri.parse(
+  //       'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
+
+  //   try {
+  //     final response = await http.get(url);
+
+  //     if (response.body == null) {
+  //       return;
+  //     }
+  //     final extractedData = json.decode(response.body) as Map<String, dynamic>;
+  //     final List<BillModel> loadedBills = [];
+  //     extractedData.forEach((billId, billData) {
+  //       final createdAtString = billData['createdAt'] as String?;
+  //       final duDateString = billData['duDate'] as String?;
+
+  //       loadedBills.add(BillModel(
+  //         id: billId,
+  //         billName: billData['title'] ?? '',
+  //         billAmount: billData['amount'] ?? 0,
+  //         createdAt: createdAtString != null
+  //             ? DateTime.parse(createdAtString)
+  //             : DateTime.now(),
+  //         description: billData['description'] ?? '',
+  //         dueDate: duDateString != null
+  //             ? DateTime.parse(duDateString)
+  //             : DateTime.now(),
+  //       ));
+  //     });
+  //     _bills = loadedBills;
+  //     notifyListeners();
+  //   } catch (error) {
+  //     // Handle errors appropriately
+  //     print("Error fetching and setting bills: $error");
+  //     rethrow;
+  //   }
+  // }
+
+  // Future<void> fetchAndSetBills() async {
+  //   var url = Uri.parse(
+  //       'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
+
+  //   try {
+  //     final response = await http.get(url);
+  //     final extractedData = json.decode(response.body) as Map<String, dynamic>;
+  //     final List<BillModel> loadedBills = [];
+  //     extractedData.forEach((billId, billData) {
+  //       loadedBills.add(BillModel(
+  //         id: billId,
+  //         billName: billData['title'],
+  //         billAmount: billData['amount'],
+  //         createdAt: DateTime.parse(billData['createdAt']),
+  //         description: billData['description'],
+  //         dueDate: DateTime.parse(billData['duDate']),
+  //       ));
+  //     });
+  //     _bills = loadedBills;
+
+  //     notifyListeners();
+  //   } catch (error) {
+  //     rethrow;
+  //   }
+  // }
 }

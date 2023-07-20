@@ -17,7 +17,17 @@ class _AddBillState extends State<AddBill> {
   void initState() {
     super.initState();
 
-    context.read<BillProvider>().fetchAndSetBills();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAndSetBills();
+    });
+  }
+
+  Future<void> _fetchAndSetBills() async {
+    try {
+      await context.read<BillProvider>().fetchAndSetBills();
+    } catch (error) {
+      print("Error fetching and setting bills: $error");
+    }
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -74,8 +84,6 @@ class _AddBillState extends State<AddBill> {
       }
       dateController.text = DateFormat('yyyy-MM-dd').format(datePicked);
       date = datePicked;
-
-      // print('Leo${date!.toIso8601String()}');
     });
   }
 
@@ -270,12 +278,15 @@ class _AddBillState extends State<AddBill> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text('Hey Jesse'),
       ),
-      body: billData.isEmpty
-          ? const Center(
-              child: Text(
-                  'Nothing to display. Press the plus button to create a bill'),
-            )
-          : const BillCreation(),
+      body:
+          // billData.isEmpty
+          //     ? const Center(
+          //         child: Text(
+          //             'Nothing to display. Press the plus button to create a bill'),
+          //       )
+          //     :
+
+          const BillCreation(),
     );
   }
 }
