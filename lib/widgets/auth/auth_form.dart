@@ -1,4 +1,8 @@
+import 'package:bill_reminder_app/Data/models/http_exception_file.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
 
 class AuthForm extends StatefulWidget {
   const AuthForm({super.key});
@@ -9,18 +13,73 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  TextEditingController passwordEditCont = TextEditingController();
   var _isLogin = true;
-  String userEmail = '';
-  String userName = '';
-  String userPassword = '';
-  void _trySubmit() {
+  Map<String, dynamic> authData = {
+    'userEmail': '',
+    'userName': '',
+    'userPassword': ''
+  };
+
+  void _showErrorDialog(String message) async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('An error occured'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Ok'))
+            ],
+          );
+        });
+  }
+
+  Future<void> _trySubmit() async {
     final isValid = formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
+
     if (isValid) {
       formKey.currentState!.save();
-      print(userEmail);
-      print(userName);
-      print(userPassword);
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        await Provider.of<Auth>(context, listen: false)
+            .signUp(authData['userEmail'], authData['userPassword']);
+        setState(() {
+          _isLoading = false;
+        });
+        // if (_isLogin) {
+        //   await Provider.of<Auth>(context, listen: false)
+        //       .login(authData['userEmail'], authData['userPassword']);
+        // }
+      } on HttpException catch (error) {
+        var errorMessage = 'Authentication failed ';
+        if (error.toString().contains('EMAIL_EXISTS')) {
+          errorMessage = 'The email address is already in use.';
+        } else if (error.toString().contains('INVALID_EMAIL')) {
+          errorMessage = 'This is not a valid email address';
+        } else if (error.toString().contains('WEAK_PASSWORD ')) {
+          errorMessage = 'The password id too weak.';
+        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+          errorMessage = 'Could not find user with that email';
+        } else if (error.toString().contains('INVALID_PASSWORD')) {
+          errorMessage = 'Invalid password';
+        }
+        _showErrorDialog(errorMessage);
+      } catch (error) {
+        var errorMessage = 'Could not authenticate you. Try again later';
+        _showErrorDialog(errorMessage);
+      }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -40,7 +99,7 @@ class _AuthFormState extends State<AuthForm> {
                   TextFormField(
                     key: const ValueKey('email'),
                     onSaved: (value) {
-                      userEmail = value!;
+                      authData['userEmail'] = value!;
                     },
                     validator: (value) {
                       if (value!.isEmpty || !value.contains('@')) {
@@ -56,7 +115,7 @@ class _AuthFormState extends State<AuthForm> {
                     TextFormField(
                       key: const ValueKey('username'),
                       onSaved: (value) {
-                        userName = value!;
+                        authData['userName'] = value!;
                       },
                       validator: (value) {
                         if (value!.isEmpty || value.length < 4) {
@@ -67,9 +126,10 @@ class _AuthFormState extends State<AuthForm> {
                       decoration: const InputDecoration(labelText: 'Username'),
                     ),
                   TextFormField(
+                    controller: passwordEditCont,
                     key: const ValueKey('password'),
                     onSaved: (value) {
-                      userPassword = value!;
+                      authData['userPassword'] = value!;
                     },
                     validator: (value) {
                       if (value!.isEmpty || value.length < 7) {
@@ -80,19 +140,34 @@ class _AuthFormState extends State<AuthForm> {
                     decoration: const InputDecoration(labelText: 'Password'),
                     obscureText: true,
                   ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: const ValueKey('cpassword'),
+                      validator: (value) {
+                        if (value != passwordEditCont.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                      // onSaved: (value) {
+                      //    = value!;
+                      // },
+                      decoration:
+                          const InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                    ),
                   const SizedBox(
                     height: 12,
                   ),
-                  SizedBox(
-                    width: 110,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.all(12),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15))),
-                        onPressed: _trySubmit,
-                        child: Text(_isLogin ? 'Login' : 'Signup')),
-                  ),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          onPressed: _trySubmit,
+                          child: Text(_isLogin ? 'Login' : 'Signup')),
                   TextButton(
                       onPressed: () {
                         setState(() {

@@ -1,6 +1,6 @@
+import 'package:bill_reminder_app/providers/auth_provider.dart';
 import 'package:bill_reminder_app/providers/bill_provider.dart';
 import 'package:bill_reminder_app/screens/auth_screen.dart';
-import 'package:bill_reminder_app/screens/my_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => BillProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Auth()),
+        ChangeNotifierProvider(
+          create: (context) => BillProvider(),
+        )
+      ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData().copyWith(
