@@ -50,14 +50,19 @@ class _AuthFormState extends State<AuthForm> {
         _isLoading = true;
       });
       try {
-        await Provider.of<Auth>(context, listen: false)
-            .signUp(authData['userEmail'], authData['userPassword']);
+        if (_isLogin) {
+          await Provider.of<Auth>(context, listen: false)
+              .login(authData['userEmail'], authData['userPassword']);
+        } else {
+          await Provider.of<Auth>(context, listen: false)
+              .signUp(authData['userEmail'], authData['userPassword']);
+        }
+
         setState(() {
           _isLoading = false;
         });
         // if (_isLogin) {
-        //   await Provider.of<Auth>(context, listen: false)
-        //       .login(authData['userEmail'], authData['userPassword']);
+
         // }
       } on HttpException catch (error) {
         var errorMessage = 'Authentication failed ';
