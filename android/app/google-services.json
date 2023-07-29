@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "874860067770",
+    "firebase_url": "https://bill-reminder-7ceee-default-rtdb.firebaseio.com",
+    "project_id": "bill-reminder-7ceee",
+    "storage_bucket": "bill-reminder-7ceee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874860067770:android:7661662650efa03e7afb83",
+        "android_client_info": {
+          "package_name": "com.example.bill_reminder_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874860067770-kk44vgst79qva6h1fqr3jp9vo3jnism2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmhcF5VbvbC6phLs7l0keurDDAEG-I0kY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874860067770-kk44vgst79qva6h1fqr3jp9vo3jnism2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,6 +7,10 @@ import '../Data/models/bill_model.dart';
 import 'package:http/http.dart' as http;
 
 class BillProvider extends ChangeNotifier {
+  final String? authToken;
+  final String? userId;
+  BillProvider(this.authToken, this._bills, this.userId);
+
   List<BillModel> _bills = [];
 
   List<BillModel> get bills {
@@ -18,7 +22,7 @@ class BillProvider extends ChangeNotifier {
     try {
       if (billIndex >= 0) {
         var url = Uri.parse(
-            'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
+            'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json?auth=$authToken');
         await http.patch(url,
             body: json.encode({
               'title': billModel.billName,
@@ -38,7 +42,7 @@ class BillProvider extends ChangeNotifier {
 
   Future<void> addBill(BillModel bill) async {
     var url = Uri.parse(
-        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
+        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json?auth=$authToken');
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -46,7 +50,8 @@ class BillProvider extends ChangeNotifier {
             'description': bill.description,
             'amount': bill.billAmount,
             'duDate': bill.dueDate?.toIso8601String(),
-            'createdAt': bill.createdAt?.toIso8601String()
+            'createdAt': bill.createdAt?.toIso8601String(),
+            'userId': userId
           }));
 
       var newBill = BillModel(
@@ -67,7 +72,7 @@ class BillProvider extends ChangeNotifier {
 
   Future<void> deleteBill(String id) async {
     var url = Uri.parse(
-        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json');
+        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills/$id.json?auth=$authToken');
     final existingBillIndex = _bills.indexWhere((bill) => bill.id == id);
     BillModel? existingBill = _bills[existingBillIndex];
     _bills.removeAt(existingBillIndex);
@@ -88,7 +93,7 @@ class BillProvider extends ChangeNotifier {
 
   Future<void> fetchAndSetBills() async {
     var url = Uri.parse(
-        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json');
+        'https://bill-reminder-7ceee-default-rtdb.firebaseio.com/bills.json?auth=$authToken&orderBy="userId"&equalTo="$userId"');
 
     try {
       final response = await http.get(url);
