@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
+
 class AddBill extends StatefulWidget {
   const AddBill({super.key});
 
@@ -298,6 +300,35 @@ class _AddBillState extends State<AddBill> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text('Hey Jesse'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content:
+                            const Text('Are you sure, do you want to logout?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('No')),
+                          TextButton(
+                              onPressed: () {
+                                Provider.of<Auth>(context, listen: false)
+                                    .logOut();
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Yes'))
+                        ],
+                      );
+                    });
+              },
+              icon: const Icon(Icons.exit_to_app))
+        ],
       ),
       body: _isLoading
           ? const Center(

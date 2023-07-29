@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>874860067770-rf95oquqland4db3ohda279r1ijt574t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.874860067770-rf95oquqland4db3ohda279r1ijt574t</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAqYGfrX6oSdKyjZ5ndHzAhhrkbBc9vcf0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>874860067770</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.billReminderApp</string>
+	<key>PROJECT_ID</key>
+	<string>bill-reminder-7ceee</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bill-reminder-7ceee.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:874860067770:ios:cb4e96076022fb007afb83</string>
+	<key>DATABASE_URL</key>
+	<string>https://bill-reminder-7ceee-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
