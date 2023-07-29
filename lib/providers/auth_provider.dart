@@ -5,7 +5,7 @@ import 'package:bill_reminder_app/Data/models/http_exception_file.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import './links.dart';
+import '.Links/links.dart';
 
 class Auth with ChangeNotifier {
   String? _token;
