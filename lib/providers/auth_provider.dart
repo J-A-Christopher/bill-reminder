@@ -5,6 +5,7 @@ import 'package:bill_reminder_app/Data/models/http_exception_file.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import './links.dart';
 
 class Auth with ChangeNotifier {
   String? _token;
@@ -30,8 +31,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> signUp(String email, String password) async {
-    var url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCjOvL4dJO9VFxMpjzNKKzpy1gl2gOCzHA');
+    var url = Keys.sigUpLink;
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -66,8 +66,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> login(String email, String password) async {
-    var url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCjOvL4dJO9VFxMpjzNKKzpy1gl2gOCzHA');
+    var url = Keys.loginLink;
     try {
       final response = await http.post(url,
           body: json.encode({
