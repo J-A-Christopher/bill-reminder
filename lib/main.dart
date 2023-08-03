@@ -3,38 +3,44 @@ import 'package:bill_reminder_app/providers/bill_provider.dart';
 import 'package:bill_reminder_app/screens/auth_screen.dart';
 import 'package:bill_reminder_app/screens/my_home_screen.dart';
 import 'package:bill_reminder_app/screens/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'Data/api/firebase_api.dart';
+import 'firebase_options.dart';
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp(
-//     options: DefaultFirebaseOptions.currentPlatform,
-//   );
-//   await FirebaseApi().initNotifications();
+// void main() {
 //   runApp(const MyApp());
-// final messaging = FirebaseMessaging.instance;
-// final settings = await messaging.requestPermission(
-//     alert: true,
-//     announcement: false,
-//     badge: true,
-//     carPlay: false,
-//     criticalAlert: false,
-//     provisional: false,
-//     sound: true);
-// if (kDebugMode) {
-//   print('Permission granted: ${settings.authorizationStatus}');
 // }
 
-// String? token = await messaging.getToken();
-// if (kDebugMode) {
-//   print('Registration Token=$token');
-// }
-// }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseApi().initNotifications();
+  runApp(const MyApp());
+  final messaging = FirebaseMessaging.instance;
+  final settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true);
+  if (kDebugMode) {
+    print('Permission granted: ${settings.authorizationStatus}');
+  }
+
+  String? token = await messaging.getToken();
+  if (kDebugMode) {
+    print('Registration Token=$token');
+  }
+}
 //diiETVwsRNy_aMeGrYBZLs:APA91bFvtt3wq8g6AasshsVZjRomOZh5lWqtWYtrgwPpwgARL03hpH8AbU0L6AUfvUfEAfk2Rc1Ie5janwYch6EtwRNMBER0RArQDMeaIHLFkgd_N4IiBBoS5EGHFBu-9oXRg30inpgr
 
 class MyApp extends StatelessWidget {

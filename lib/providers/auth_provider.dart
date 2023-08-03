@@ -41,6 +41,7 @@ class Auth with ChangeNotifier {
           }));
       //print('giana${json.decode(response.body)}');
       final responseData = json.decode(response.body);
+      print('hall$responseData');
 
       if (responseData['error'] != null) {
         throw HttpException(message: responseData['error']['message']);
@@ -64,6 +65,20 @@ class Auth with ChangeNotifier {
       rethrow;
     }
   }
+
+  // Future<void> retrieveUserData(String email, String password) async {
+  //   var url = Uri.parse(
+  //       'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCjOvL4dJO9VFxMpjzNKKzpy1gl2gOCzHA?auth=$_token');
+  //   try {
+  //     final response = await http.post(url,
+  //         body: json.encode({'email': email, 'password': password}));
+  //     final responseData = json.decode(response.body);
+  //     print('Lamu$responseData');
+  //   } catch (error) {
+  //     print(error);
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> login(String email, String password) async {
     var url = Keys.loginLink;
