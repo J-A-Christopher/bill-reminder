@@ -53,6 +53,8 @@ class _AuthFormState extends State<AuthForm> {
         if (_isLogin) {
           await Provider.of<Auth>(context, listen: false)
               .login(authData['userEmail'], authData['userPassword']);
+          // await Provider.of<Auth>(context, listen: false).retrieveUserData(
+          //     authData['userEmail'], authData['userPassword']);
         } else {
           await Provider.of<Auth>(context, listen: false)
               .signUp(authData['userEmail'], authData['userPassword']);
